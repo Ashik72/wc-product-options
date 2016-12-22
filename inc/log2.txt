@@ -1,0 +1,24 @@
+a:0:{} - October 22, 2016, 3:03 pm
+
+
+8663 - October 22, 2016, 3:03 pm
+
+
+a:6:{s:4:"data";a:2:{s:11:"wp_autosave";a:9:{s:7:"post_id";s:4:"8663";s:9:"post_type";s:18:"embroidery_pricing";s:11:"post_author";s:1:"3";s:10:"post_title";s:8:"dsffddsf";s:7:"content";s:0:"";s:7:"excerpt";s:0:"";s:8:"catslist";s:0:"";s:10:"auto_draft";s:1:"1";s:8:"_wpnonce";s:10:"b6a3181a6e";}s:20:"wp-refresh-post-lock";a:1:{s:7:"post_id";s:4:"8663";}}s:8:"interval";s:2:"15";s:6:"_nonce";s:10:"ecf0918aee";s:6:"action";s:9:"heartbeat";s:9:"screen_id";s:18:"embroidery_pricing";s:9:"has_focus";s:4:"true";} - October 22, 2016, 3:03 pm
+
+
+8663 - October 22, 2016, 3:03 pm
+
+
+a:49:{s:8:"_wpnonce";s:10:"b6a3181a6e";s:16:"_wp_http_referer";s:51:"/wp-admin/post-new.php?post_type=embroidery_pricing";s:7:"user_ID";i:3;s:6:"action";s:8:"editpost";s:14:"originalaction";s:8:"editpost";s:11:"post_author";i:3;s:9:"post_type";s:18:"embroidery_pricing";s:20:"original_post_status";s:10:"auto-draft";s:10:"referredby";s:70:"http://nippi9.sites.dev/wp-admin/edit.php?post_type=embroidery_pricing";s:25:"_wp_original_http_referer";s:70:"http://nippi9.sites.dev/wp-admin/edit.php?post_type=embroidery_pricing";s:10:"auto_draft";s:0:"";s:7:"post_ID";s:4:"8663";s:20:"meta-box-order-nonce";s:10:"f09ecf6531";s:20:"closedpostboxesnonce";s:10:"afb5d0c77b";s:10:"post_title";s:8:"dsffddsf";s:20:"samplepermalinknonce";s:10:"71e4f7f7ce";s:10:"wp-preview";s:0:"";s:18:"hidden_post_status";s:5:"draft";s:11:"post_status";s:7:"publish";s:20:"hidden_post_password";s:0:"";s:22:"hidden_post_visibility";s:6:"public";s:10:"visibility";s:6:"public";s:13:"post_password";s:0:"";s:2:"mm";s:2:"10";s:2:"jj";s:2:"22";s:2:"aa";s:4:"2016";s:2:"hh";s:2:"15";s:2:"mn";s:2:"03";s:2:"ss";s:2:"06";s:9:"hidden_mm";s:2:"10";s:6:"cur_mm";s:2:"10";s:9:"hidden_jj";s:2:"22";s:6:"cur_jj";s:2:"22";s:9:"hidden_aa";s:4:"2016";s:6:"cur_aa";s:4:"2016";s:9:"hidden_hh";s:2:"15";s:6:"cur_hh";s:2:"15";s:9:"hidden_mn";s:2:"03";s:6:"cur_mn";s:2:"03";s:16:"original_publish";s:7:"Publish";s:7:"publish";s:7:"Publish";s:9:"tax_input";a:1:{s:15:"embroidery_size";a:0:{}}s:6:"newtag";a:1:{s:15:"embroidery_size";s:0:"";}s:10:"menu_order";s:1:"0";s:9:"post_name";s:0:"";s:14:"post_mime_type";s:0:"";s:2:"ID";i:8663;s:14:"comment_status";s:6:"closed";s:11:"ping_status";s:6:"closed";} - October 22, 2016, 3:03 pm
+
+
+8663 - October 22, 2016, 3:03 pm
+
+
+a:48:{s:8:"_wpnonce";s:10:"b6a3181a6e";s:16:"_wp_http_referer";s:50:"/wp-admin/post.php?post=8663&action=edit&message=6";s:7:"user_ID";i:3;s:6:"action";s:8:"editpost";s:14:"originalaction";s:8:"editpost";s:11:"post_author";i:3;s:9:"post_type";s:18:"embroidery_pricing";s:20:"original_post_status";s:7:"publish";s:10:"referredby";s:98:"http://nippi9.sites.dev/wp-admin/post-new.php?post_type=embroidery_pricing&wp-post-new-reload=true";s:25:"_wp_original_http_referer";s:98:"http://nippi9.sites.dev/wp-admin/post-new.php?post_type=embroidery_pricing&wp-post-new-reload=true";s:7:"post_ID";s:4:"8663";s:20:"meta-box-order-nonce";s:10:"f09ecf6531";s:20:"closedpostboxesnonce";s:10:"afb5d0c77b";s:10:"post_title";s:8:"dsffddsf";s:20:"samplepermalinknonce";s:10:"71e4f7f7ce";s:10:"wp-preview";s:0:"";s:18:"hidden_post_status";s:7:"publish";s:11:"post_status";s:7:"publish";s:20:"hidden_post_password";s:0:"";s:22:"hidden_post_visibility";s:6:"public";s:10:"visibility";s:6:"public";s:13:"post_password";s:0:"";s:2:"mm";s:2:"10";s:2:"jj";s:2:"22";s:2:"aa";s:4:"2016";s:2:"hh";s:2:"15";s:2:"mn";s:2:"03";s:2:"ss";s:2:"41";s:9:"hidden_mm";s:2:"10";s:6:"cur_mm";s:2:"10";s:9:"hidden_jj";s:2:"22";s:6:"cur_jj";s:2:"22";s:9:"hidden_aa";s:4:"2016";s:6:"cur_aa";s:4:"2016";s:9:"hidden_hh";s:2:"15";s:6:"cur_hh";s:2:"15";s:9:"hidden_mn";s:2:"03";s:6:"cur_mn";s:2:"03";s:16:"original_publish";s:6:"Update";s:4:"save";s:6:"Update";s:9:"tax_input";a:1:{s:15:"embroidery_size";a:1:{i:0;i:479;}}s:6:"newtag";a:1:{s:15:"embroidery_size";s:0:"";}s:10:"menu_order";s:1:"0";s:9:"post_name";s:8:"dsffddsf";s:14:"post_mime_type";s:0:"";s:2:"ID";i:8663;s:14:"comment_status";s:6:"closed";s:11:"ping_status";s:6:"closed";} - October 22, 2016, 3:04 pm
+
+
+8663 - October 22, 2016, 3:04 pm
+
+
