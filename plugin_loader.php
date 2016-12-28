@@ -30,6 +30,9 @@ require_once( plugin_dir_path( __FILE__ ) . '/inc/logo_choice_post_type.php' );
 
 require_once( plugin_dir_path( __FILE__ ) . '/inc/product_frontend.php' );
 
+require_once( plugin_dir_path( __FILE__ ) . '/inc/process_wc_price_data.php' );
+
+
 //add_action('wp_footer', 'testFuncWPO' );
 
 function testFuncWPO() {

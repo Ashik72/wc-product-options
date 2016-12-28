@@ -1,3 +1,4 @@
+
 <?php
 
 if(!defined('WPINC')) // MUST have WordPress.
@@ -21,7 +22,812 @@ class WC_pro_opt__Product_Frontend
     add_action( 'wp_ajax_add_calculate_total_update', array($this, 'add_calculate_total_update_func') );
     add_action( 'wp_ajax_nopriv_add_calculate_total_update', array($this, 'add_calculate_total_update_func') );
 
+    add_action( 'wp_ajax_process_color_amount', array($this, 'process_color_amount_func') );
+    add_action( 'wp_ajax_nopriv_process_color_amount', array($this, 'process_color_amount_func') );
+
+    add_action( 'wp_ajax_process_logo_src_title', array($this, 'process_logo_src_title_func') );
+    add_action( 'wp_ajax_nopriv_process_logo_src_title', array($this, 'process_logo_src_title_func') );
+
+    add_action( 'wp_ajax_process_final_step', array($this, 'process_final_step_func') );
+    add_action( 'wp_ajax_nopriv_process_final_step', array($this, 'process_final_step_func') );
+
+    add_action( 'wp_ajax_process_final_step_none', array($this, 'process_final_step_none_func') );
+    add_action( 'wp_ajax_nopriv_process_final_step_none', array($this, 'process_final_step_none_func') );
+
+    add_action('template_redirect', array($this, 'testFooter'));
+
+
+
   }
+
+  public function testFooter() {
+
+    if (empty($_GET['tid']))
+      return;
+
+      $get_data = get_transient($_GET['tid']);
+
+      d($get_data);
+      //d(self::calculate_emb_color_pric($_GET['tid']));
+
+      foreach ($get_data as $key => $value) {
+
+        if (strcmp($key, "color_val") === 0)
+          d($value);
+
+        if (strcmp($key, "size_data") === 0)
+          d(self::size_data_toString($value));
+
+        if (strcmp($key, "logo_cat_title") === 0)
+          d($value);
+
+        if (strcmp($key, "embroidery_option") === 0)
+          d($value);
+
+        if (strcmp($key, "color_option") === 0)
+          d($value);
+
+        if (strcmp($key, "image_logo_uploaded") === 0)
+          d($value);
+
+        if (strcmp($key, "logo_positioning_select") === 0)
+          d(self::logo_pos_toString($value));
+
+
+      }
+
+
+    //
+    // $base_price = $this->calculate_base_price(8357, 10);
+    var_dump($_COOKIE);
+
+
+    wp_die();
+  }
+
+
+    public static function logo_pos_toString($value_data = null) {
+
+      if (empty($value_data))
+        return;
+
+        $value_data = get_object_vars($value_data);
+        $value_data = ( ( is_array($value_data) ) ? $value_data : array() );
+        $return_string = "";
+        foreach ($value_data as $size => $quantiy) {
+
+          $return_string .= $size." : ".$quantiy;
+          $return_string .= " | ";
+
+        }
+
+        return $return_string;
+
+    }
+
+  public static function size_data_toString($value_data = null) {
+
+    if (empty($value_data))
+      return;
+
+      $value_data = ( ( is_array($value_data) ) ? $value_data : array() );
+      $return_string = "";
+      foreach ($value_data as $size => $quantiy) {
+
+        $return_string .= $size." : ".$quantiy;
+        $return_string .= " | ";
+
+      }
+
+      return $return_string;
+
+  }
+
+
+
+
+public static function calculate_emb_color_pric($transient_id = null) {
+
+  if (empty($transient_id))
+    return;
+
+    $get_data = get_transient($transient_id);
+
+    $product_id = $get_data['product_id'];
+
+    if ( (strcmp($get_data['embroidery_option'], "undefined") !== 0 ) )
+      $state = 'embroidery_option';
+    if ( (strcmp($get_data['color_option'], "undefined") !== 0 ) )
+      $state = 'color_option';
+    else
+      return 0;
+
+    if (empty($get_data['embroidery_option']) || empty($get_data['color_option']))
+      return 0;
+
+      $price = 0;
+
+      $total_count_emb = 0;
+
+      if (empty($get_data['size_data']))
+        return;
+
+
+      $size_data = $get_data['size_data'];
+      foreach ($size_data as $key => $value) {
+        $total_count_emb += (int) $value;
+      }
+
+      if (strcmp($state, "embroidery_option") === 0) {
+
+        $get_product_meta_my_custom_embroidery_data = get_post_meta($product_id, '_my_custom_embroidery_data', true);
+
+        $id = $get_product_meta_my_custom_embroidery_data;
+
+        $terms = wp_get_post_terms( $id, 'embroidery_size' );
+
+        $term_name = strtolower(str_replace(' ', '', $get_data['embroidery_option']));
+        $term_key_id = 'row_data_'.$term_name."_".$id;
+        $emPricingData = get_post_meta( $id, $term_key_id, true );
+
+
+
+        foreach ($emPricingData as $price_key => $price_val) {
+
+          if ($total_count_emb >= (int) $price_val['qty_form'] && $total_count_emb <= (int) $price_val['qty_to'])
+            $price = $price_val['qty_price'];
+
+        }
+
+      } else if (strcmp($state, "color_option") === 0) {
+
+        $get_product_meta_my_custom_embroidery_data = get_post_meta($product_id, '_my_custom_screen_printing_data', true);
+
+        $id = $get_product_meta_my_custom_embroidery_data;
+
+        $terms = wp_get_post_terms( $id, 'screen_printing_color' );
+
+        $term_name = strtolower(str_replace(' ', '', $get_data['color_option']));
+        $term_key_id = 'row_data_'.$term_name."_".$id;
+        $emPricingData = get_post_meta( $id, $term_key_id, true );
+        //d($emPricingData);
+        foreach ($emPricingData as $price_key => $price_val) {
+
+          if ($total_count_emb >= (int) $price_val['qty_form'] && $total_count_emb <= (int) $price_val['qty_to'])
+            $price = $price_val['qty_price'];
+
+        }
+
+
+      }
+
+      return $price * $total_count_emb;
+
+}
+
+public function process_final_step_none_func() {
+
+  if (empty($_POST['transition_uid']))
+    return;
+
+  $transition_uid = $_POST['transition_uid'];
+
+  if (isset($_COOKIE['transient_id']))
+    setcookie('transient_id', "", time()-(60*60*24), '/');
+
+  setcookie('transient_id', $transition_uid, time()+(60*60*24), '/');
+
+
+  $wc = WC();
+
+  $cart_url = $wc->cart->get_checkout_url();
+
+  echo json_encode($cart_url);
+
+  wp_die();
+
+}
+
+  public function process_final_step_func() {
+
+    if (empty($_POST['transient_id']))
+      return;
+
+    $transition_uid = $_POST['transient_id'];
+
+    if( ! empty( $_FILES ) ) {
+      foreach( $_FILES as $file ) {
+        if( is_array( $file ) ) {
+          $attachment_id = self::upload_user_file( $file );
+        }
+      }
+    }
+
+    $data = get_transient($transition_uid);
+
+    $data['embroidery_option'] = $_POST['embroidery_option'];
+    $data['color_option'] = $_POST['color_option'];
+
+
+    if (!empty($attachment_id))
+      $data['image_logo_uploaded'] = wp_get_attachment_url($attachment_id);
+
+    $data['logo_positioning_select'] = json_decode(stripslashes($_POST['logo_positioning_select']));;
+    //delete_transient( $transition_uid );
+    set_transient( $transition_uid, $data, 60*60*12 );
+
+    $data = get_transient($transition_uid);
+
+    $size_data = $data['size_data'];
+
+    $total_count_emb = 0;
+    foreach ($size_data as $key => $value) {
+      $total_count_emb += (int) $value;
+    }
+
+    if (isset($_COOKIE['transient_id']))
+      setcookie('transient_id', "", time()-(60*60*24), '/');
+
+    setcookie('transient_id', $transition_uid, time()+(60*60*24), '/');
+
+    $base_price = $this->calculate_base_price($data['product_id'], $total_count_emb);
+
+
+    $wc = WC();
+
+    // $wc_product = new WC_Product((int) $data['product_id']);
+    //
+    // $wc->cart->add_to_cart($data['product_id']);
+
+    $cart_url = $wc->cart->get_checkout_url();
+
+    echo json_encode($cart_url);
+    //echo json_encode($transition_uid);
+
+    wp_die();
+
+  }
+
+  public static function upload_user_file( $file = array() ) {
+
+	require_once( ABSPATH . 'wp-admin/includes/admin.php' );
+      $file_return = wp_handle_upload( $file, array('test_form' => false ) );
+      if( isset( $file_return['error'] ) || isset( $file_return['upload_error_handler'] ) ) {
+          return false;
+      } else {
+          $filename = $file_return['file'];
+          $attachment = array(
+              'post_mime_type' => $file_return['type'],
+              'post_title' => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
+              'post_content' => '',
+              'post_status' => 'inherit',
+              'guid' => $file_return['url']
+          );
+          $attachment_id = wp_insert_attachment( $attachment, $file_return['url'] );
+          require_once(ABSPATH . 'wp-admin/includes/image.php');
+          $attachment_data = wp_generate_attachment_metadata( $attachment_id, $filename );
+          wp_update_attachment_metadata( $attachment_id, $attachment_data );
+          if( 0 < intval( $attachment_id ) ) {
+          	return $attachment_id;
+          }
+      }
+      return false;
+}
+
+  function add_product_for_processing_callback() {
+
+    ///echo json_encode($_POST);
+
+     $wc = WC();
+
+     try {
+
+        $cart_add = $wc->cart->add_to_cart((int)$_POST['product_id']);
+// customize_1
+        $template = wc_product_options_PLUGIN_DIR . '/views/customize_1.php';
+
+        if ( file_exists( $template ) )
+            include $template;
+
+     } catch (Exception $e) {
+
+           echo json_encode($e);
+
+     }
+
+
+    wp_die();
+
+
+  }
+
+  function process_logo_src_title_func() {
+
+    $transition_uid = $_POST['transition_uid'];
+
+    if (empty($transition_uid))
+      return;
+
+      $transition_uid = $_POST['transition_uid'];
+
+      $data = get_transient($transition_uid);
+      //$data['logo_src'] = $_POST['logo_src'];
+      $data['logo_cat_title'] = $_POST['logo_title'];
+      //delete_transient( $transition_uid );
+      set_transient( $transition_uid, $data, 60*60*12 );
+      $data['logo_title'] = $data['logo_cat_title'];
+
+      if (strcmp($data['logo_title'], "embroidery logo") === 0)
+        $template = wc_product_options_PLUGIN_DIR . '/views/customize_3_emb_logo.php';
+      elseif (strcmp($data['logo_title'], "printed logo") === 0)
+        $template = wc_product_options_PLUGIN_DIR . '/views/customize_3_printed_logo.php';
+      elseif (strcmp($data['logo_title'], "none") === 0)
+        $template = wc_product_options_PLUGIN_DIR . '/views/customize_4.php';
+      else
+        $template = wc_product_options_PLUGIN_DIR . '/views/customize_3_emb_logo.php';
+
+
+      if ( file_exists( $template ) )
+          include $template;
+
+      //echo json_encode(get_transient($transition_uid));
+
+      wp_die();
+
+  }
+
+  public static function displayScreenPrintingDataWithTrsID($transition_id = null) {
+
+    ob_start();
+
+    //////
+    $transient_id = $transition_id;
+    $data = get_transient( $transient_id );
+    $product_id = $data['product_id'];
+
+    $size_data = $data['size_data'];
+
+    $total_count_emb = 0;
+    foreach ($size_data as $key => $value) {
+      $total_count_emb += (int) $value;
+    }
+    // var_dump($total_count_emb);
+
+    ///////
+
+
+    $data_return = "";
+
+    $get_product_meta_my_custom_embroidery_data = get_post_meta($product_id, '_my_custom_screen_printing_data', true);
+
+    $id = $get_product_meta_my_custom_embroidery_data;
+
+    $terms = wp_get_post_terms( $id, 'screen_printing_color' );
+
+    $emPricingData = array();
+    $termNames = array();
+
+  if (empty($id))
+    return;
+
+  if (strcmp($id, "none") === 0)
+    return;
+
+
+   foreach ($terms as $term_key => $term) {
+
+    $termNames[] = $term->name;
+
+    $term->name = strtolower(str_replace(' ', '', $term->name));
+
+      $term_key_id = 'row_data_'.$term->name."_".$id;
+
+
+      $emPricingData[] = get_post_meta( $id, $term_key_id, true );
+
+  }
+
+
+  $str_single_pricing_data = "";
+  $countsingleData = 0;
+  $tableData = array();
+  $emPricingDataBreakDown = array();
+  $termName_key_arr = array();
+
+
+    $data_return .= "<table>";
+
+
+    foreach ($termNames as $count => $termName) {
+
+      $termName_key = strtolower(str_replace(' ', '', $termName));
+
+      $termName_key_arr[] = $termName_key;
+
+      $tableData['size'][] = $termName;
+
+      // foreach ($emPricingData as $key => $SingleEmPricingData) {
+      //   $emPricingDataBreakDown[$termName_key][] = $SingleEmPricingData;
+
+      //   echo $termName_key;
+      //   var_dump($SingleEmPricingData);
+
+      // }
+
+    }
+
+    $termName_key_count = 0;
+
+     foreach ($emPricingData as $key => $SingleEmPricingData) {
+
+        $emPricingDataBreakDown[$termName_key_arr[$termName_key_count]] = $SingleEmPricingData;
+
+
+      $termName_key_count++;
+
+      }
+
+
+
+    foreach ($tableData['size'] as $key => $single_size) {
+
+      $termName_key = strtolower(str_replace(' ', '', $single_size));
+
+      $data_return .= "<tr><td>{$single_size}</td>";
+
+      $data_return .= "<td>";
+
+      $data_return .= "<table class='screenPrintingData_subtable'>";
+
+      $data_return .= "</tr>";
+
+      foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+
+        if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+          continue;
+
+        $data_return .= "<td>{$valuePricingData['qty_form']} - {$valuePricingData['qty_to']}</td>";
+
+      }
+
+      $data_return .= "</tr>";
+
+      foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+        if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+          continue;
+
+        $data_return .= "<td> $";
+
+        $data_return .= floatval( $valuePricingData['qty_price'] );
+
+
+        $data_return .= "</td>";
+
+      }
+
+      $data_return .= "</tr>";
+
+
+      /////////
+
+      foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+
+
+        if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+          continue;
+
+        //$data_return .= "<td>{$valuePricingData['qty_form']} - {$valuePricingData['qty_to']}</td>";
+
+        $yes = ( (int) $valuePricingData['qty_form'] <= $total_count_emb) && ($total_count_emb <= (int) $valuePricingData['qty_to']);
+        //<td>{$yes}- {$single_size}</td>
+
+          $html_radio = '<input class="embroidery_radio_opt" type="radio" name="embroidery_logo_color_selection[]" data-yes="'.$yes.'" data-embroidery_logo_color="'.$single_size.'" value="">'.$single_size;
+
+          $data_return .= "<td> ";
+          $data_return .= ( empty($yes) ? "" : $html_radio);
+
+          $data_return .= "</td>";
+
+      }
+
+      $data_return .= "</tr>";
+
+
+
+      $data_return .= "</table>";
+
+      $data_return .= "</td>";
+      $data_return .= "</tr>";
+
+    }
+
+    $data_return .= "</table>";
+
+
+
+
+
+
+
+
+    _e($data_return);
+
+    $output = ob_get_contents();
+
+
+    return $output;
+
+
+
+  }
+
+
+
+
+      public static function displayEmbroiderPricingDataTransID($transient_id = null) {
+
+        ob_start();
+
+        //////
+
+        $data = get_transient( $transient_id );
+        // var_dump($data);
+        $product_id = $data['product_id'];
+
+        $size_data = $data['size_data'];
+
+        $total_count_emb = 0;
+        foreach ($size_data as $key => $value) {
+          $total_count_emb += (int) $value;
+        }
+        // var_dump($total_count_emb);
+
+        ///////
+        $data_return = "";
+
+        $get_product_meta_my_custom_embroidery_data = get_post_meta($product_id, '_my_custom_embroidery_data', true);
+
+        $id = $get_product_meta_my_custom_embroidery_data;
+
+      if (empty($id))
+        return;
+
+      if (strcmp($id, "none") === 0)
+        return;
+
+        $terms = wp_get_post_terms( $id, 'embroidery_size' );
+
+        $emPricingData = array();
+        $termNames = array();
+
+       foreach ($terms as $term_key => $term) {
+
+        $termNames[] = $term->name;
+
+        $term->name = strtolower(str_replace(' ', '', $term->name));
+
+          $term_key_id = 'row_data_'.$term->name."_".$id;
+
+
+          $emPricingData[] = get_post_meta( $id, $term_key_id, true );
+
+      }
+
+      $str_single_pricing_data = "";
+      $countsingleData = 0;
+      $tableData = array();
+      $emPricingDataBreakDown = array();
+      $termName_key_arr = array();
+
+
+        $data_return .= "<table>";
+
+        foreach ($termNames as $count => $termName) {
+
+          $termName_key = strtolower(str_replace(' ', '', $termName));
+
+          $termName_key_arr[] = $termName_key;
+
+          $tableData['size'][] = $termName;
+
+          // foreach ($emPricingData as $key => $SingleEmPricingData) {
+          //   $emPricingDataBreakDown[$termName_key][] = $SingleEmPricingData;
+
+          //   echo $termName_key;
+          //   var_dump($SingleEmPricingData);
+
+          // }
+
+        }
+
+        $termName_key_count = 0;
+
+         foreach ($emPricingData as $key => $SingleEmPricingData) {
+
+            $emPricingDataBreakDown[$termName_key_arr[$termName_key_count]] = $SingleEmPricingData;
+
+
+          $termName_key_count++;
+
+          }
+
+
+        foreach ($tableData['size'] as $key => $single_size) {
+
+          $termName_key = strtolower(str_replace(' ', '', $single_size));
+
+          $data_return .= "<tr><td>{$single_size}</td>";
+
+          $data_return .= "<td>";
+
+          $data_return .= "<table class='embroideryPricingData_subtable'>";
+
+          $data_return .= "</tr>";
+
+          foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+
+            if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+              continue;
+
+            $data_return .= "<td>{$valuePricingData['qty_form']} - {$valuePricingData['qty_to']}</td>";
+
+          }
+
+          $data_return .= "</tr>";
+
+          foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+            if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+              continue;
+
+            $data_return .= "<td> $";
+
+            $data_return .= floatval( $valuePricingData['qty_price'] );
+
+
+            $data_return .= "</td>";
+
+          }
+
+          $data_return .= "</tr>";
+
+          ///
+
+          foreach ($emPricingDataBreakDown[$termName_key] as $key => $valuePricingData) {
+
+
+            if ( ($valuePricingData['qty_form'] == 0) && ($valuePricingData['qty_to'] == 0) && ($valuePricingData['qty_price'] == 0))
+              continue;
+
+            //$data_return .= "<td>{$valuePricingData['qty_form']} - {$valuePricingData['qty_to']}</td>";
+
+            $yes = ( (int) $valuePricingData['qty_form'] <= $total_count_emb) && ($total_count_emb <= (int) $valuePricingData['qty_to']);
+            //<td>{$yes}- {$single_size}</td>
+              $html_radio = '<input class="embroidery_radio_opt" type="radio" name="embroidery_logo_size_selection[]" data-yes="'.$yes.'" data-embroidery_logo_size="'.$single_size.'" value="">'.$single_size;
+
+              $data_return .= "<td> ";
+
+              $data_return .= ( empty($yes) ? "" : $html_radio);
+
+              $data_return .= "</td>";
+
+
+          }
+
+          $data_return .= "</tr>";
+          ///
+
+          $data_return .= "</table>";
+
+          $data_return .= "</td>";
+          $data_return .= "</tr>";
+
+        }
+
+        $data_return .= "</table>";
+
+
+
+
+
+
+
+
+        _e($data_return);
+
+        $output = ob_get_contents();
+
+
+        return $output;
+
+      }
+
+
+
+
+
+  public function process_color_amount_func() {
+
+    $post_id = $_POST['product_id'];
+
+    if (empty($post_id))
+      return;
+
+      $data['product_id'] = $post_id;
+      $data['size_data'] = $_POST['size_data'];
+      $data['color_val'] = $_POST['color_val'];
+
+      $unique_id = uniqid('user_products_', true);
+      delete_transient($unique_id);
+      set_transient( $unique_id, $data, 60*60*12 );
+
+      $template = wc_product_options_PLUGIN_DIR . '/views/customize_2.php';
+
+      if ( file_exists( $template ) )
+          include $template;
+
+      wp_die();
+
+      //echo json_encode(array('transition_id' => $unique_id, 'content' => $html));
+
+
+  }
+
+
+  public function calculate_base_price($product_id = null, $total = null) {
+
+    $post_id = $product_id;
+    $total_product = $total;
+
+    $product_ruleset_id = get_post_meta($post_id, '_wc_bulk_pricing_ruleset', true);
+
+    if (empty($product_ruleset_id))
+      return;
+
+      $the_ruleset = $this->get_custom_product_ruleset( $product_ruleset_id );
+
+      $match_prices = array();
+
+      foreach ($the_ruleset['rules'] as $key => $value) {
+
+
+      if ($total_product >= (double) $value['min'] && $total_product <= (double) $value['max'])
+         $match_prices[] = 100 - $value['val'];
+
+      if ($total_product >= (double) $value['min'] && empty((double) $value['max']))
+         $match_prices[] = 100 - $value['val'];
+
+
+      }
+
+      $discount_amount = 0;
+
+      foreach ($match_prices as $key => $match_price) {
+
+        if ($match_price > $discount_amount)
+          $discount_amount = $match_price;
+
+      }
+
+      $product = new WC_Product($post_id);
+
+       $data = array(
+       'base_price' => $product->get_price(),
+       'discount_amount' => $discount_amount,
+       'single_price_after_discount' => (float) $product->get_price() - (($discount_amount / 100) * $product->get_price()),
+       'total_price_after_discount' => (float) $total_product * ($product->get_price() - (($discount_amount / 100) * $product->get_price())),
+       'total' => $total_product
+        );
+
+      return $data['total_price_after_discount'];
+
+  }
+
+
 
   public function add_calculate_total_update_func() {
 
@@ -60,6 +866,7 @@ class WC_pro_opt__Product_Frontend
         $discount_amount = $match_price;
 
     }
+
 
     $product = new WC_Product($post_id);
 
@@ -103,33 +910,7 @@ class WC_pro_opt__Product_Frontend
 
   }
 
-  function add_product_for_processing_callback() {
 
-    ///echo json_encode($_POST);
-
-     $wc = WC();
-
-     try {
-
-        $cart_add = $wc->cart->add_to_cart((int)$_POST['product_id']);
-
-
-        $template = wc_product_options_PLUGIN_DIR . '/views/customize_1.php';
-
-        if ( file_exists( $template ) )
-            include $template;
-
-     } catch (Exception $e) {
-
-           echo json_encode($e);
-
-     }
-
-
-    wp_die();
-
-
-  }
 
   public static function get_color_attributes($post_id = "") {
 
@@ -249,7 +1030,7 @@ class WC_pro_opt__Product_Frontend
   <div class="add_calculate_single_price"><b>$<span>0.00</span> <?php _e("per blank item", "wc-product-options"); ?><b></div>
   <div class="add_calculate_to_cart">
 
-<a href="#" class="btn_add_calculate_total">Add To Cart</a>
+<a href="#" class="btn_add_calculate_total general_btn">Add To Cart</a>
 
   </div>
 
@@ -652,6 +1433,8 @@ class WC_pro_opt__Product_Frontend
 
   }
 
+
+
   public static function displayEmbroiderPricingData() {
     ob_start();
 
@@ -763,6 +1546,8 @@ class WC_pro_opt__Product_Frontend
       }
 
       $data_return .= "</tr>";
+
+
 
       $data_return .= "</table>";
 

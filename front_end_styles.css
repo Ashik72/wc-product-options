@@ -299,3 +299,50 @@ input.single_color_choice {
   visibility: visible !important;
   width: 2rem;
 }
+
+/*Radio*/
+
+#containerProductTab .logo_select input[type="radio"], .embroidery_radio_opt {
+  visibility: visible;
+}
+
+.logo_select input + img {
+  width: 30%;
+}
+
+
+input.embroidery_radio_opt {
+  height: 1rem !important;
+  visibility: visible !important;
+  width: 2rem;
+}
+
+input.logo_position {
+  visibility: visible !important;
+}
+
+.logo_position+img {
+  width: 50%;
+}
+
+input#logoUserSelected {
+  visibility: visible !important;
+}
+
+.add_calculate_to_cart {
+  padding: 2rem 0;
+}
+
+.general_btn:hover {
+  background: #238cb8 none repeat scroll 0 0;
+}
+
+.general_btn {
+  background: skyblue none repeat scroll 0 0;
+  color: white;
+  padding: 1rem;
+}
+
+.choose_logo_option {
+  padding: 1rem 0rem;
+}
